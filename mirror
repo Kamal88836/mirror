@@ -1,0 +1,401 @@
+[root@mirror2 ~]#  mkdir ocp-config-operator
+[root@mirror2 ~]# cd ocp-config-operator
+[root@mirror2 ocp-config-operator]#
+
+[root@mirror2 ocp-config-operator]# wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/oc-mirror.tar.gz
+--2024-06-14 20:45:17--  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/oc-mirror.tar.gz
+Resolving mirror.openshift.com (mirror.openshift.com)... 52.85.5.112, 52.85.5.122, 52.85.5.16, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|52.85.5.112|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 64500802 (62M) [application/x-tar]
+Saving to: ‘oc-mirror.tar.gz’
+
+oc-mirror.tar.gz                                                        100%[=============================================================================================================================================================================>]  61.51M  10.5MB/s    in 6.4s
+
+2024-06-14 20:45:24 (9.55 MB/s) - ‘oc-mirror.tar.gz’ saved [64500802/64500802]
+
+[root@mirror2 ocp-config-operator]# 
+
+[root@mirror2 ocp-config-operator]# tar xvzf oc-mirror.tar.gz
+oc-mirror
+[root@mirror2 ocp-config-operator]# 
+[root@mirror2 ocp-config-operator]# chmod +x oc-mirror
+[root@mirror2 ocp-config-operator]#
+[root@mirror2 ocp-config-operator]# mv oc-mirror /usr/local/bin
+[root@mirror2 ocp-config-operator]#
+
+
+
+
+
+[root@mirror2 ocp-config-operator]# oc-mirror list operators --catalog registry.redhat.io/redhat/redhat-operator-index:v4.14
+NAME                                          DISPLAY NAME                                             DEFAULT CHANNEL
+3scale-operator                               Red Hat Integration - 3scale                             threescale-2.14
+advanced-cluster-management                   Advanced Cluster Management for Kubernetes               release-2.10
+amq-broker-rhel8                              Red Hat Integration - AMQ Broker for RHEL 8 (Multiarch)  7.12.x
+amq-online                                    Red Hat Integration - AMQ Online                         stable
+amq-streams                                   Red Hat Streams for Apache Kafka                         stable
+amq7-interconnect-operator                    Red Hat Integration - AMQ Interconnect                   1.10.x
+ansible-automation-platform-operator          Ansible Automation Platform                              stable-2.4-cluster-scoped
+ansible-cloud-addons-operator                 Ansible Cloud Addons                                     stable-2.4-cluster-scoped
+apicast-operator                              Red Hat Integration - 3scale APIcast gateway             threescale-2.14
+authorino-operator                            Red Hat - Authorino (Technical Preview)                  tech-preview-v1
+aws-efs-csi-driver-operator                   AWS EFS CSI Driver Operator                              stable
+aws-load-balancer-operator                    AWS Load Balancer Operator                               stable-v1
+bamoe-businessautomation-operator             IBM Business Automation                                  8.x-stable
+bamoe-kogito-operator                         IBM BAMOE Kogito Operator                                8.x
+bare-metal-event-relay                        Bare Metal Event Relay                                   stable
+businessautomation-operator                   Business Automation                                      stable
+cincinnati-operator                           OpenShift Update Service                                 v1
+cluster-kube-descheduler-operator             Kube Descheduler Operator                                stable
+cluster-logging                               Red Hat OpenShift Logging                                stable-5.9
+cluster-observability-operator                Cluster Observability Operator                           development
+clusterresourceoverride                       ClusterResourceOverride Operator                         stable
+compliance-operator                           Compliance Operator                                      stable
+container-security-operator                   Red Hat Quay Container Security Operator                 stable-3.11
+costmanagement-metrics-operator               Cost Management Metrics Operator                         stable
+cryostat-operator                             Red Hat build of Cryostat                                stable
+datagrid                                      Data Grid                                                8.4.x
+deployment-validation-operator                Deployment Validation Operator                           alpha
+devspaces                                     Red Hat OpenShift Dev Spaces                             stable
+devworkspace-operator                         DevWorkspace Operator                                    fast
+dpu-network-operator                          DPU Network Operator                                     stable
+eap                                           JBoss EAP                                                stable
+elasticsearch-operator                        OpenShift Elasticsearch Operator                         stable-5.8
+external-dns-operator                         ExternalDNS Operator                                     stable-v1
+fence-agents-remediation                      Fence Agents Remediation Operator                        stable
+file-integrity-operator                       File Integrity Operator                                  stable
+fuse-apicurito                                Red Hat Integration - API Designer                       fuse-apicurito-7.13.x
+fuse-console                                  Red Hat Integration - Fuse Console                       7.13.x
+fuse-online                                   Red Hat Integration - Fuse Online                        latest
+gatekeeper-operator-product                   Gatekeeper Operator                                      stable
+gcp-filestore-csi-driver-operator             GCP Filestore CSI Driver Operator                        stable
+ingress-node-firewall                         Ingress Node Firewall Operator                           stable
+jaeger-product                                Red Hat OpenShift distributed tracing platform           stable
+jws-operator                                  JWS Operator                                             alpha
+kernel-module-management                      Kernel Module Management                                 stable
+kernel-module-management-hub                  Kernel Module Management (Hub)                           stable
+kiali-ossm                                    Kiali Operator                                           stable
+klusterlet-product                            Klusterlet                                               stable-2.5
+kubernetes-nmstate-operator                   Kubernetes NMState Operator                              stable
+kubevirt-hyperconverged                       OpenShift Virtualization                                 stable
+local-storage-operator                        Local Storage                                            stable
+logic-operator-rhel8                          OpenShift Serverless Logic Operator                      alpha
+loki-operator                                 Loki Operator                                            stable-5.9
+lvms-operator                                 LVM Storage                                              stable-4.14
+machine-deletion-remediation                  Machine Deletion Remediation operator                    stable
+marin3r-operator                              Red Hat - MARIN3R                                        stable
+mcg-operator                                  NooBaa Operator                                          stable-4.14
+metallb-operator                              MetalLB Operator                                         stable
+mta-operator                                  Migration Toolkit for Applications Operator              stable-v7.0
+mtc-operator                                  Migration Toolkit for Containers Operator                release-v1.8
+mtr-operator                                  Migration Toolkit for Runtimes Operator                  alpha
+mtv-operator                                  Migration Toolkit for Virtualization Operator            release-v2.6
+multicluster-engine                           multicluster engine for Kubernetes                       stable-2.5
+multicluster-global-hub-operator-rh           Multicluster Global Hub Operator                         release-1.1
+netobserv-operator                            Network Observability                                    stable
+nfd                                           Node Feature Discovery Operator                          stable
+node-healthcheck-operator                     Node Health Check Operator                               stable
+node-maintenance-operator                     Node Maintenance Operator                                stable
+node-observability-operator                   Node Observability Operator                              alpha
+numaresources-operator                        numaresources-operator                                   4.14
+ocs-client-operator                           OpenShift Data Foundation Client                         stable-4.14
+ocs-operator                                  OpenShift Container Storage                              stable-4.14
+odf-compose-operator                          ODF Compose (DO NOT INSTALL)                             stable-4.14
+odf-csi-addons-operator                       CSI Addons                                               stable-4.14
+odf-multicluster-orchestrator                 ODF Multicluster Orchestrator                            stable-4.14
+odf-operator                                  OpenShift Data Foundation                                stable-4.14
+odr-cluster-operator                          Openshift DR Cluster Operator                            stable-4.14
+odr-hub-operator                              Openshift DR Hub Operator                                stable-4.14
+openshift-builds-operator                     builds for Red Hat OpenShift Operator                    latest
+openshift-cert-manager-operator               cert-manager Operator for Red Hat OpenShift              stable-v1
+openshift-custom-metrics-autoscaler-operator  Custom Metrics Autoscaler                                stable
+openshift-gitops-operator                     Red Hat OpenShift GitOps                                 latest
+openshift-pipelines-operator-rh               Red Hat OpenShift Pipelines                              latest
+openshift-secondary-scheduler-operator        Secondary Scheduler Operator for Red Hat OpenShift       stable
+opentelemetry-product                         Red Hat build of OpenTelemetry                           stable
+power-monitoring-operator                     Power monitoring for Red Hat OpenShift                   tech-preview
+ptp-operator                                  PTP Operator                                             stable
+quay-bridge-operator                          Red Hat Quay Bridge Operator                             stable-3.11
+quay-operator                                 Red Hat Quay                                             stable-3.11
+red-hat-camel-k                               Red Hat Integration - Camel K                            1.10.x
+red-hat-hawtio-operator                       HawtIO Operator                                          stable-v1
+redhat-oadp-operator                          OADP Operator                                            stable-1.3
+rh-service-binding-operator                   Service Binding Operator                                 stable
+rhacs-operator                                Advanced Cluster Security for Kubernetes                 stable
+rhbk-operator                                 Keycloak Operator                                        stable-v24
+rhdh                                          Red Hat Developer Hub Operator                           fast
+rhods-operator                                Red Hat OpenShift AI                                     fast
+rhods-prometheus-operator                     Prometheus Operator                                      beta
+rhpam-kogito-operator                         RHPAM Kogito Operator                                    7.x
+rhsso-operator                                Red Hat Single Sign-On Operator                          stable
+rhtas-operator                                Red Hat Trusted Artifact Signer                          stable
+run-once-duration-override-operator           Run Once Duration Override Operator                      stable
+sandboxed-containers-operator                 OpenShift sandboxed containers Operator                  stable
+secrets-store-csi-driver-operator             Secrets Store CSI Driver Operator                        preview
+security-profiles-operator                    Security Profiles Operator                               release-alpha-rhel-8
+self-node-remediation                         Self Node Remediation Operator                           stable
+serverless-operator                           Red Hat OpenShift Serverless                             stable
+service-registry-operator                     Red Hat Integration - Service Registry Operator          2.x
+service-telemetry-operator                    Service Telemetry Operator                               stable-1.5
+servicemeshoperator                           Red Hat OpenShift Service Mesh                           stable
+skupper-operator                              Red Hat Service Interconnect                             stable
+smart-gateway-operator                        Smart Gateway Operator                                   stable-1.5
+sriov-network-operator                        SR-IOV Network Operator                                  stable
+submariner                                    Submariner                                               stable-0.17
+tang-operator                                 NBDE Tang Server                                         alpha
+tempo-product                                 Tempo Operator                                           stable
+topology-aware-lifecycle-manager              Topology Aware Lifecycle Manager                         stable
+vertical-pod-autoscaler                       VerticalPodAutoscaler                                    stable
+volsync-product                               VolSync                                                  stable
+web-terminal                                  Web Terminal                                             fast
+windows-machine-config-operator               Windows Machine Config Operator                          stable
+[root@mirror2 ocp-config-operator]#
+
+
+imageset-config.yaml
+
+
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+mirror:
+  platform:
+    channels:
+    - name: stable-4.14
+      type: ocp
+  operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.14  
+    packages:
+    - name: sriov-network-operator
+    - name: odf-operator
+    - name: odf-csi-addons-operator
+    - name: ocs-operator
+    - name: serverless-operator
+    - name: ptp-operator
+    - name: numaresources-operator
+    - name: lvms-operator
+    - name: local-storage-operator
+    - name: kubernetes-nmstate-operator
+    - name: cluster-logging
+  additionalImages:
+  - name: registry.redhat.io/ubi8/ubi:latest
+  helm: {}
+
+
+
+
+
+  [root@mirror2 ocp-config-operator]# oc-mirror --config=./imageset-config.yaml file://registry
+Creating directory: registry/oc-mirror-workspace/src/publish
+Creating directory: registry/oc-mirror-workspace/src/v2
+Creating directory: registry/oc-mirror-workspace/src/charts
+Creating directory: registry/oc-mirror-workspace/src/release-signatures
+backend is not configured in ./imageset-config.yaml, using stateless mode
+backend is not configured in ./imageset-config.yaml, using stateless mode
+No metadata detected, creating new workspace
+
+wrote mirroring manifests to registry/oc-mirror-workspace/operators.1718605810/manifests-redhat-operator-index
+
+To upload local images to a registry, run:
+
+        oc adm catalog mirror file://redhat/redhat-operator-index:v4.14 REGISTRY/REPOSITORY
+<dir>
+  lvms4/lvms-must-gather-rhel8
+    blobs:
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:58812227daace7bbf4d042bc653a7c69b45cc52405c05037789285c7d90161f0 12.17KiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:e7cda67a50cd97e392099dfdf16c7fa20fdaf362b4d7faf15e45806843c96f89 12.17KiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:0635ee74506292df86ab6a87cc69d0f4ef43dab9dc00c6760c284ddf04df991a 12.18KiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:9dca734ca2307996a58d22631d91779ceb502ab3c640ae9075d43faefff333a4 12.18KiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:1d680d5baffa7643d3c0598c16480487080cac34783b22c2113c5104d66b1537 65.57MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:9899cf4f17c4211dd959db05e145aa7c0eda965ef284b80a26327ff7b5ecac18 67.4MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:081e613e7aeaa7a9ee2e13074376887cdf1ba2ba0e7431f113267c9858ae0827 69.02MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:da3d07a1c8ab6971d262076a37e1cfaef559f23eba6b4cea4829ecada68d99ea 69.28MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:5f8d5bae51b7c332a6d3393f68c5181a7744ecbbce446c5c94bfe1e6529971c1 72.74MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:959a1f4c284f8fccd5a55196f5db65312cc3f120025383c6bec5fed57cf7fb39 73.31MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:3954349e40073fed567a627e4ceb393b41aa1f9614ff277acb2ba1f0ec3f1a96 75.31MiB
+      registry.redhat.io/lvms4/lvms-must-gather-rhel8 sha256:1195449887d81d4af10b8939761e993c809bc03ef4b465f5a60b4911990a1d17 81.93MiB
+    manifests:
+      sha256:48a1c956bfab176ccdd43ab3f1605ada226593d3d8d7c6b9dd287d166bb16071
+      sha256:7729e2a6e0200218d398c81328a909575b32eb7ddc05f28db19d108bcf7f1dae
+      sha256:7f550aabc5045192f2a376cea542a3f7af4f91ae38ec92cc88087424c969e79a
+      sha256:b48d244af8d297034cd369bd5030ffce1337c773843faf96a33e08216191afb1
+      sha256:c267a14958a453fe560fda80e513a45e317b1f659e9a95e2806a02352a8146a0
+      sha256:48a1c956bfab176ccdd43ab3f1605ada226593d3d8d7c6b9dd287d166bb16071 -> 7cba01f0
+
+...
+
+sha256:d29b49c805c939c780ba249dadd347fdbf871bac591bfda9bde29f5dd5e7def9 file://ubi8/openjdk-21
+sha256:86e499efaa15b1ad6221aa4d4fe26e514a8bb721aa3bf7575293b7101eb0e128 file://ubi8/openjdk-21:15dd64ef
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:e44e73516474f673e10ff7f8d5ffbfaf9a2f64161ed92c559b54892b4d33fb1d 45.84MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:8d89b8737e93c4ce75596df354a5acc8639eebdf2f37416100ac552295a671cd 10.73MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:9328019c96d21eb4a8bfe9fcfa567c67bc5cc8d7e0c6c09382b953ef4b2a54b8 10.55MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:a48865e39a4f85856535197f50f45d55e9db1f3b64df547863683151d06b3c9d 43.46MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:cfb7594ab440f225d2f0d57adf1437c3b63ff9f094a28918f3dd3862cbbae864 10.7MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:17e5b635b32014948d8b0ca7f0eb7e4490a834f9022b04a10ef7ee48dd895831 82.1MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:f740fde74d439855bf7a3195a0ab66c480c7c08c9ddd194d10b7f804f6f302fb 11.38MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:5437268cf1a44d3cd78e22f0db181874dad18189e8299b90b9a6631d27d82829 42.07MiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:4796d64008a52fb7e3ea75f0949f3d8aeba042d7d4548a5d1e69146db070fe63 19.69KiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:2c8898bb5fa25d28f25c4d9fff26ab1b4c2a66caecaf792575850dfb005f20a7 19.25MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:97da74cc6d8fa5d1634eb1760fd1da5c6048619c264c23e62d75f3bf6b8ef5c4 75.84MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:f1543f27d1312786cff4cf8bd2782de3fc564724417163ae85309360062c3fb2 73.87MiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:b2bd8340bdd3a2ac51d528c98e5bbc8e7bb33bc4d2f09815d9a8aac91589fd93 42.67MiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:b99920f5bdbade482152ce95f5792d5e934edfa1cbe949c98e126e8aa282e467 19.08MiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:26e2d7f172cf2165b07c07826b216a17fe357173258f8bcdc75115fba4e5145a 21.01MiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:3d8ad9382dba93760df6e421335829f5cfea53f810174e40fc504a6a4d60330a 19.7KiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:414b036666136fbbbd8963ed12821bee393068e4cf1e3d2661dd75a9eebf5210 20.75MiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:f99b5b2c9060145cb114c05c862de535384e9f7e6321348b492b52c48b36e39c 19.71KiB
+uploading: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:96d18ad5db7f8efeb6aa288f11d660a24079f81cdb8923e68b42528531610a73 19.69KiB
+mounted: file://openshift4/kubernetes-nmstate-rhel8-operator sha256:9ed68b94598760816e142fcf7f8e9572af00b5567df5cc818ddb0810919627a6 73.08MiB
+sha256:588475ce2d00911ac6331f773d5cbdcd8fe9542deb48b2f27270718ca2de5b12 file://openshift4/kubernetes-nmstate-rhel8-operator
+sha256:168d22e049f5794df50be7dfeb25dc9af541fa5f7788b90c1e6fde69dd4f9505 file://openshift4/kubernetes-nmstate-rhel8-operator
+sha256:6885eb3e50fa845477048790d3170d3fb50bfc399256019118c3cc45d63045fc file://openshift4/kubernetes-nmstate-rhel8-operator
+sha256:2cca31ade81e13581c390d753952b59f50db1e7862577b5326058e6b7f377688 file://openshift4/kubernetes-nmstate-rhel8-operator
+sha256:bdcb80591b839ec6b4b94efa838ca41585f3044826534413b91efd2acdca4b4d file://openshift4/kubernetes-nmstate-rhel8-operator:39e346f2
+info: Mirroring completed in 3h9m52.65s (8.431MB/s)
+Creating archive /root/ocp-config-operator/registry/mirror_seq1_000000.tar
+
+[root@mirror2 ocp-config-operator]#
+
+
+
+[root@mirror2 ocp-config-operator]# cd registry/
+[root@mirror2 registry]# ls -lrt
+total 95993652
+drwxr-xr-x. 3 root root        4096 Jun 17 12:36 oc-mirror-workspace
+-rw-r--r--. 1 root root 98297480192 Jun 17 15:55 mirror_seq1_000000.tar
+[root@mirror2 registry]#
+[root@mirror2 registry]# oc mirror --from=./mirror_seq1_000000.tar docker://mirror2.srib-lab-ocp.lan:8443
+Checking push permissions for mirror2.srib-lab-ocp.lan:8443
+Publishing image set from archive "./mirror_seq1_000000.tar" to registry "mirror2.srib-lab-ocp.lan:8443"
+metadata has single-use label, using stateless mode
+metadata has single-use label, using stateless mode
+mirror2.srib-lab-ocp.lan:8443/
+  openshift4/ose-sriov-network-operator
+    blobs:
+      file://openshift4/ose-sriov-network-operator sha256:d8190195889efb5333eeec18af9b6c82313edd4db62989bd3a357caca4f13f0e 1.404KiB
+      file://openshift4/ose-sriov-network-operator sha256:af5a3a5a8f3cc75825262e7d00c612519ced4a4003d2c1ee21e9720934fb1cbd 1.413KiB
+      file://openshift4/ose-sriov-network-operator sha256:5d5771e51f28e6b3e7609ebb505bfb1411539e7725ef4ffb34264b8b731088fd 1.42KiB
+      file://openshift4/ose-sriov-network-operator sha256:76364c290476498c967e8118b91f72a69f84331d9aa2d62d1c80a0762451acf3 18.76KiB
+      file://openshift4/ose-sriov-network-operator sha256:dffb560e97ee2d3b3335ebf1983497a321669adc8211fa5478a43bd8e9ae1a2f 18.76KiB
+      file://openshift4/ose-sriov-network-operator sha256:44d3bafea4433386f1586fdf0c036846e6511624ca2a3b8d4e52c7a8c800c10b 18.77KiB
+      file://openshift4/ose-sriov-network-operator sha256:4beb229b1a18e0a60ebc446d7ff9c815a31177587611d223a03f2a597596054d 11.22MiB
+      file://openshift4/ose-sriov-network-operator sha256:4c259d03354268e3a96fe663b49b0fa9285e0517d36ae527c54a7d86faac0575 11.23MiB
+      file://openshift4/ose-sriov-network-operator sha256:30e2ec9baaa919d3962826635ced423cf2fe98e7fa719fb866b65036320e898f 11.9MiB
+      file://openshift4/ose-sriov-network-operator sha256:67dc4ac5cb8708dd8ecc56212d480abd81bc6805981863a54d5b31076685f6c0 19.47MiB
+      file://openshift4/ose-sriov-network-operator sha256:957d5e57367b127f6a15e412f05e1b1ca3eb2ea3a33950bde317684b5e05b38f 19.85MiB
+      file://openshift4/ose-sriov-network-operator sha256:82a5cfce8509caf63add96c952b187fb7557fce111cddd5980c1defc4c70abdd 22.01MiB
+      file://openshift4/ose-sriov-network-operator sha256:d4c7775117fc15b7cddedf88bc3dad40b9856ef4eb07bfc881d7cae6d76af01f 63.77MiB
+      file://openshift4/ose-sriov-network-operator sha256:cf7c4a6e74d5c59dba6ebbb037d2a9e1a08266067fbd1be484e0b9631ac6fb3e 64.89MiB
+      file://openshift4/ose-sriov-network-operator sha256:bc121474bf5f9f3b7fc9a1bf3563d5147c53a1ba54ed89f876f7a5b78dc4182d 69.97MiB
+      file://openshift4/ose-sriov-network-operator sha256:f1543f27d1312786cff4cf8bd2782de3fc564724417163ae85309360062c3fb2 73.87MiB
+      file://openshift4/ose-sriov-network-operator sha256:97da74cc6d8fa5d1634eb1760fd1da5c6048619c264c23e62d75f3bf6b8ef5c4 75.84MiB
+      file://openshift4/ose-sriov-network-operator sha256:17e5b635b32014948d8b0ca7f0eb7e4490a834f9022b04a10ef7ee48dd895831 82.1MiB
+    manifests:
+      sha256:1d7f6de61f11d792543c006e764696616d13d38bb2ff0fc2de639400fcd2df66
+      sha256:2f2efd4be1aa527804b6b9c550e99455b7b17fe43f6ffb756a570866e68ca52e
+      sha256:df2f810a4637626ae2fe8447aee5dc7d02960a868d2c2ce5a385aab1895c2190
+      sha256:f185d71747045ae68284558bddc608e879d90fffe999ecdf58bf0ec7435e79fb
+      sha256:2f2efd4be1aa527804b6b9c550e99455b7b17fe43f6ffb756a570866e68ca52e -> 30154ff1
+  stats: shared=0 unique=18 size=526.2MiB ratio=1.00
+
+phase 0:
+  mirror2.srib-lab-ocp.lan:8443 openshift4/ose-sriov-network-operator blobs=18 mounts=0 manifests=5 shared=0
+
+info: Planning completed in 490ms
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:76364c290476498c967e8118b91f72a69f84331d9aa2d62d1c80a0762451acf3 18.76KiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:4beb229b1a18e0a60ebc446d7ff9c815a31177587611d223a03f2a597596054d 11.22MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:82a5cfce8509caf63add96c952b187fb7557fce111cddd5980c1defc4c70abdd 22.01MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:bc121474bf5f9f3b7fc9a1bf3563d5147c53a1ba54ed89f876f7a5b78dc4182d 69.97MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:4c259d03354268e3a96fe663b49b0fa9285e0517d36ae527c54a7d86faac0575 11.23MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:30e2ec9baaa919d3962826635ced423cf2fe98e7fa719fb866b65036320e898f 11.9MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:dffb560e97ee2d3b3335ebf1983497a321669adc8211fa5478a43bd8e9ae1a2f 18.76KiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:957d5e57367b127f6a15e412f05e1b1ca3eb2ea3a33950bde317684b5e05b38f 19.85MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:f1543f27d1312786cff4cf8bd2782de3fc564724417163ae85309360062c3fb2 73.87MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:cf7c4a6e74d5c59dba6ebbb037d2a9e1a08266067fbd1be484e0b9631ac6fb3e 64.89MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:44d3bafea4433386f1586fdf0c036846e6511624ca2a3b8d4e52c7a8c800c10b 18.77KiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:d4c7775117fc15b7cddedf88bc3dad40b9856ef4eb07bfc881d7cae6d76af01f 63.77MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:17e5b635b32014948d8b0ca7f0eb7e4490a834f9022b04a10ef7ee48dd895831 82.1MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:97da74cc6d8fa5d1634eb1760fd1da5c6048619c264c23e62d75f3bf6b8ef5c4 75.84MiB
+uploading: mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator sha256:67dc4ac5cb8708dd8ecc56212d480abd81bc6805981863a54d5b31076685f6c0 19.47MiB
+sha256:1d7f6de61f11d792543c006e764696616d13d38bb2ff0fc2de639400fcd2df66 mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator
+sha256:f185d71747045ae68284558bddc608e879d90fffe999ecdf58bf0ec7435e79fb mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator
+sha256:df2f810a4637626ae2fe8447aee5dc7d02960a868d2c2ce5a385aab1895c2190 mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator
+sha256:2f2efd4be1aa527804b6b9c550e99455b7b17fe43f6ffb756a570866e68ca52e mirror2.srib-lab-ocp.lan:8443/openshift4/ose-sriov-network-operator:30154ff1
+info: Mirroring completed in 4.37s (126.1MB/s)
+mirror2.srib-lab-ocp.lan:8443/
+  openshift-serverless-1/eventing-storage-version-migration-rhel8
+    blobs:
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:37779b4497a54ce737db688cbe5bf652610cf8c733d1e7828dd10f4beccb5cd5 10.59KiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:cebee97b79a4e22e4958a4ebcc1337c07152fa2c32428edc72e95119815699c1 10.59KiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:c7756a24436cd7a00baa570d4f59fee58c34b473708bfa5b563129118332f70f 10.59KiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:53e89ef9c7ad86030aeb60879f35d479d010c030f425f5a2a514d9e4511873ca 35.82MiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:87e3ab05d9a4afadab5e2fe35fa8150a7a01c25ac51130a933b585d3dfa0f05c 37.51MiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:3599fcb6113c68e4b8e4a8b7a41e5df0f1527c53f0d3b4a513becc473fe0479d 42.02MiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:2dc9e5a18443b97aae1c7802b56f4f0f2e8b4f187bf1771a515a099e5a7cbc98 189.8MiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:5634f131a7307ef8936ed95b513e781db5e37877788ba0615ad596c56b11c497 195.5MiB
+      file://openshift-serverless-1/eventing-storage-version-migration-rhel8 sha256:166c9904b77a03d449b41a91afb0428f92f4f0e24d7f2814a54f6443aa33588c 226.9MiB
+    manifests:
+      sha256:45996687585221ec1d28d786ba1951099221220dc9340ec7b528b484fc71a8ca
+      sha256:4a5e8233812053808fbf4d26dae6cb512027c872f93ccb09a54bd0065d4720f4
+      sha256:7c79cd7b18191d5a2e50055814d7e8173e789f3351068972bb9a337ed7301d1f
+      sha256:904e6e2af897d0b7490b1ddae5cce9af1d4061b373155be75d5d16304f9d7fa5
+      sha256:4a5e8233812053808fbf4d26dae6cb512027c872f93ccb09a54bd0065d4720f4 -> b5813f6f
+  stats: shared=0 unique=9 size=727.6MiB ratio=1.00
+
+phase 0:
+  mirror2.srib-lab-ocp.lan:8443 openshift-serverless-1/eventing-storage-version-migration-rhel8 blobs=9 mounts=0 manifests=5 shared=0
+  
+...
+
+info: Mirroring completed in 16.27s (105.6MB/s)
+Wrote release signatures to oc-mirror-workspace/results-1718620158
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/include-config.gob
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/index/index.json
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/0789e16a9a86c07d03fa666682a84e1dfe795d911c7898f756448835e923bb62
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/0aa132a3f1308787844a412f2c38d1633dfd6aa12b34ad446475ab60a9fe1dcf
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/297eafccbd9596a4925d4fc782d0e00bdb218b0b900559a1b4aebf8237eba52d
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/29b7417db42fbd452191c75335a749a8f18963312d18e61f007613faf0bedc75
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/301c534b5faf3c5d7a350108b4e66c77c73ec78eb2ef9ccd9977fef6fc2a2760
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/30e2ec9baaa919d3962826635ced423cf2fe98e7fa719fb866b65036320e898f
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/3cad1ada68ddecd787222a7f803a8aede47fb6aefc1ce4e1ef0eb3ff27784d16
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/406afeefefb55572a0aaa5feb8fa4cacf5c739ac475a29c7ae26649a1556424e
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/47a424328612cc51408058e0984d8807ac55842317c55e15f6add77c23a2fe14
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/49243febec1d5c4bfc031c933026e320b667b2f649ee9ded4c62344f2a64b153
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/4beb229b1a18e0a60ebc446d7ff9c815a31177587611d223a03f2a597596054d
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/4c259d03354268e3a96fe663b49b0fa9285e0517d36ae527c54a7d86faac0575
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/54af59ad79cd269bc40126e4423a274db8d5ca242c16eddfaff1284a2d30957e
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/56ff0ea27200919a6c7fdfbc10fe52b5914ff95b547015bed4e983bcb1bc4233
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/60cf7c5a1bae61ac14465bc5caa0f81cf14bccb81b75e8c1dae1511a5a481d4e
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/6527266eeff3d9f978b66ff87398bdca1e6435e64eca64cccf8ba28744bd0a94
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/6535b648278adddb651312beca02686e27376ded06cf9335ee12dd8ef9a6fee8
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/766eb4e6e310ee409d80280df22e7e81e16e6940f46e3529ab140f0a9de0e9aa
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/819a58da1e0263b09e8b69cdf76ea51bfbe6d3d8ae99d6e6c1ad24b1393460c1
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/914841af91d1d5d8a3b2d8475e1e6870853ffd022c970044cfbbdc601c5db564
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/93ba4b61be9cb0f57660496f06a860fb6e47e0e659e549fe09397b63595f2d4d
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/ac206d499245e979d77b2b3882d0f0ecd7fdbc9779f30be06a5b479befefe4a2
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/ad7c7022358cd8572280b3e5f2e07dd047404205e9ae74872267b1b82f3cb58e
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/bc121474bf5f9f3b7fc9a1bf3563d5147c53a1ba54ed89f876f7a5b78dc4182d
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/c6cc395f2701cc7f41a63f23a3a6db07ca13adfe94af73fd649ed2cf022ebbc2
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/c743647a16648c2aab0b9971a5b04f19c103a86259fc84a5e1f5edce147340fc
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/c999e050e602a45158bfe90163217bb61fbaff5b84c87053c1982b8ef0ff500d
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/cbf56127819bd5af120b15a19e96adf3b26d09e7f73d4046f02c0535de63dabd
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/cf7c4a6e74d5c59dba6ebbb037d2a9e1a08266067fbd1be484e0b9631ac6fb3e
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/d2da84f6e5b72b37214fb486accfc8764a26f91a31d4cb6f6f593c4a8246a675
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/d4c7775117fc15b7cddedf88bc3dad40b9856ef4eb07bfc881d7cae6d76af01f
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/blobs/sha256/dcb50fbb19862ee2fc667ac5e73af906f763019ac276316948412d9614191ceb
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/index.json
+catalogs/registry.redhat.io/redhat/redhat-operator-index/v4.14/layout/oci-layout
+Writing image mapping to oc-mirror-workspace/results-1718620158/mapping.txt
+Writing CatalogSource manifests to oc-mirror-workspace/results-1718620158
+Writing ICSP manifests to oc-mirror-workspace/results-1718620158
+[root@mirror2 registry]#
+[root@mirror2 registry]#
+
+
+
+[root@bastion registry]# cd oc-mirror-workspace
+[root@bastion oc-mirror-workspace]# ls -lrt
+total 0
+drwxr-xr-x. 8 root root 116 Jan 13 04:43 src
+drwxr-xr-x. 4 root root 153 Jan 13 05:03 results-1705139555
+[root@bastion oc-mirror-workspace]#
