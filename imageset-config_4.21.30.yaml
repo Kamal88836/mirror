@@ -1,0 +1,83 @@
+apiVersion: mirror.openshift.io/v2alpha1
+kind: ImageSetConfiguration
+
+archiveSize: 4
+
+mirror:
+  platform:
+    graph: true
+    channels:
+      - name: stable-4.21
+        minVersion: 4.21.30
+        maxVersion: 4.21.30
+
+  operators:
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.21
+      packages:
+
+        # ODF FULL STACK
+        - name: odf-operator
+          channels:
+            - name: stable-4.21
+
+        - name: ocs-operator
+          channels:
+            - name: stable-4.21
+
+        - name: ocs-client-operator
+          channels:
+            - name: stable-4.21
+
+        - name: mcg-operator
+          channels:
+            - name: stable-4.21
+
+        - name: rook-ceph-operator
+          channels:
+            - name: stable-4.21
+
+        - name: cephcsi-operator
+          channels:
+            - name: stable-4.21
+
+        - name: odf-csi-addons-operator
+          channels:
+            - name: stable-4.21
+
+        - name: odf-prometheus-operator
+          channels:
+            - name: stable-4.21
+
+        - name: odf-dependencies
+          channels:
+            - name: stable-4.21
+
+        - name: recipe
+          channels:
+            - name: stable-4.21
+
+        - name: odf-external-snapshotter-operator
+          channels:
+            - name: stable-4.21
+        # STORAGE
+        - name: lvms-operator
+          channels:
+            - name: stable-4.21
+
+        - name: local-storage-operator
+          channels:
+            - name: stable
+
+        # NETWORK
+        - name: kubernetes-nmstate-operator
+          channels:
+            - name: stable
+
+        - name: sriov-network-operator
+          channels:
+            - name: stable
+
+        - name: ptp-operator
+          channels:
+            - name: stable
+
