@@ -1,0 +1,340 @@
+3.3 Copy all the yaml file to the jump server (haproxy) apply the yamls
+
+
+
+root@bastion mirror_4_20_14]# ll
+total 18905940
+-rw-r--r--  1 root root       1726 Mar 25 21:21 imageset-config_4_21.30.yaml
+-rw-r--r--  1 root root       1687 Mar 25 21:21 imageset-config_4_21.30.yaml_bkp
+-rw-r--r--  1 root root 4294513152 Mar 25 21:30 mirror_000001.tar
+-rw-r--r--  1 root root 4252032000 Mar 25 21:30 mirror_000002.tar
+-rw-r--r--  1 root root 4208504832 Mar 25 21:30 mirror_000003.tar
+-rw-r--r--  1 root root 4228549120 Mar 25 21:30 mirror_000004.tar
+-rw-r--r--  1 root root 2376067072 Mar 25 21:30 mirror_000005.tar
+drwxr-xr-x  3 root root         71 Mar 25 16:02 old_data
+drwxr-xr-x  3 root root        126 Mar 25 16:01 old_data1
+drwxr-xr-x 11 root root        181 Mar 25 21:30 working-dir
+[root@bastion mirror_4_19_23]# cd working-dir/
+[root@bastion working-dir]# ll
+total 4
+drwxr-xr-x 2 root root 4096 Mar 25 21:32 cluster-resources
+drwxr-xr-x 3 root root   55 Mar 25 21:22 graph-preparation
+drwxr-xr-x 4 root root   35 Mar 25 21:26 helm
+drwxr-xr-x 4 root root   54 Mar 18 10:08 hold-release
+drwxr-xr-x 2 root root   47 Mar 25 21:30 logs
+drwxr-xr-x 3 root root   35 Mar 18 10:08 operator-catalogs
+drwxr-xr-x 3 root root   25 Mar 18 10:07 release-images
+drwxr-xr-x 2 root root  100 Mar 18 10:07 signatures
+[root@bastion working-dir]# cd cluster-resources/
+[root@bastion cluster-resources]# ll
+total 28
+-rw-r--r-- 1 root root  429 Mar 25 21:32 cc-redhat-operator-index-v4-21.yaml
+-rw-r--r-- 1 root root  431 Mar 25 21:32 cs-redhat-operator-index-v4-21.yaml
+-rw-r--r-- 1 root root 1351 Mar 25 21:32 idms-oc-mirror.yaml
+-rw-r--r-- 1 root root  832 Mar 25 21:32 itms-oc-mirror.yaml
+-rw-r--r-- 1 root root 1623 Mar 25 21:32 signature-configmap.json
+-rw-r--r-- 1 root root 1611 Mar 25 21:32 signature-configmap.yaml
+-rw-r--r-- 1 root root  464 Mar 25 21:32 updateService.yaml
+[root@bastion cluster-resources]#
+
+
+3.4. ETCD Backup, In Case cluster upgrade fails
+Check ETCD Running state
+
+
+srib@ocp-haproxy-1:~/ocp-catalog$ oc -n openshift-etcd get pods -l k8s-app=etcd -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE    IP           NODE                             NOMINATED NODE   READINESS GATES
+etcd-ocp-cp-1.lab1.srib-lab-ocp.lan   4/4     Running   137        184d   71.1.1.230   ocp-cp-1.lab1.srib-lab-ocp.lan   <none>           <none>
+etcd-ocp-cp-2.lab1.srib-lab-ocp.lan   4/4     Running   94         184d   71.1.1.227   ocp-cp-2.lab1.srib-lab-ocp.lan   <none>           <none>
+etcd-ocp-cp-3.lab1.srib-lab-ocp.lan   4/4     Running   80         184d   71.1.1.229   ocp-cp-3.lab1.srib-lab-ocp.lan   <none>           <none>
+srib@ocp-haproxy-1:~/ocp-catalog$ oc rsh -n openshift-etcd etcd-ocp-cp-1.lab1.srib-lab-ocp.lan
+sh-5.1# etcdctl member list -w table
++------------------+---------+--------------------------------+-------------------------+-------------------------+------------+
+|        ID        | STATUS  |              NAME              |       PEER ADDRS        |      CLIENT ADDRS       | IS LEARNER |
++------------------+---------+--------------------------------+-------------------------+-------------------------+------------+
+| 71e65fdac39c586a | started | ocp-cp-3.lab1.srib-lab-ocp.lan | https://71.1.1.229:2380 | https://71.1.1.229:2379 |      false |
+| 8a87432cda93d70b | started | ocp-cp-2.lab1.srib-lab-ocp.lan | https://71.1.1.227:2380 | https://71.1.1.227:2379 |      false |
+| e1f6cf7109bb255d | started | ocp-cp-1.lab1.srib-lab-ocp.lan | https://71.1.1.230:2380 | https://71.1.1.230:2379 |      false |
++------------------+---------+--------------------------------+-------------------------+-------------------------+------------+
+sh-5.1# 
+
+sh-5.1# etcdctl endpoint status -w table
++-------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+|        ENDPOINT         |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
++-------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+| https://71.1.1.227:2379 | 8a87432cda93d70b |   3.5.9 |  127 MB |     false |      false |        54 |  382186988 |          382186988 |        |
+| https://71.1.1.229:2379 | 71e65fdac39c586a |   3.5.9 |   96 MB |     false |      false |        54 |  382186988 |          382186988 |        |
+| https://71.1.1.230:2379 | e1f6cf7109bb255d |   3.5.9 |  124 MB |      true |      false |        54 |  382186988 |          382186988 |        |
++-------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+sh-5.1#
+
+sh-5.1# exit
+exit
+srib@ocp-haproxy-1:~/ocp-catalog$
+
+
+Take ETCD backup
+
+
+srib@ocp-haproxy-1:~/ocp-catalog$ oc debug --as-root node/ocp-cp-1.lab1.srib-lab-ocp.lan
+Temporary namespace openshift-debug-4dvvk is created for debugging node...
+Starting pod/ocp-cp-1lab1srib-lab-ocplan-debug-ksjm5 ...
+To use host binaries, run `chroot /host`
+Pod IP: 71.1.1.230
+If you don't see a command prompt, try pressing enter.
+sh-4.4# chroot /host
+sh-5.1# mkdir -p /home/core/assets/backup
+sh-5.1# ls -lrt /usr/local/bin/
+total 96
+-rwxr-xr-x. 1 root root  5990 May  7  2024 cluster-restore.sh
+-rwxr-xr-x. 1 root root  4784 May  7  2024 cluster-backup.sh
+-rwxr-xr-x. 1 root root  5733 Aug 19 13:44 nm-clean-initrd-state.sh
+-rwxr-xr-x. 1 root root 38022 Aug 19 13:44 configure-ovs.sh
+-rwxr-xr-x. 1 root root  1218 Aug 19 13:44 recover-kubeconfig.sh
+-rwxr-xr-x. 1 root root  2431 Aug 19 13:44 mco-hostname
+-rwxr-xr-x. 1 root root   100 Aug 19 13:44 kubenswrapper
+-rwx------. 1 root root  1246 Aug 19 13:44 set-rps-mask.sh
+-rwx------. 1 root root   657 Aug 19 13:44 hugepages-allocation.sh
+-rwx------. 1 root root   508 Aug 19 13:44 set-cpus-offline.sh
+-rwx------. 1 root root   747 Aug 19 13:44 clear-irqbalance-banned-cpus.sh
+-rwx------. 1 root root  3551 Aug 19 13:44 cpuset-configure.sh
+sh-5.1# /usr/local/bin/cluster-backup.sh /home/core/assets/backup
+Certificate /etc/kubernetes/static-pod-certs/configmaps/etcd-serving-ca/ca-bundle.crt is missing. Checking in different directory
+Certificate /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-serving-ca/ca-bundle.crt found!
+found latest kube-apiserver: /etc/kubernetes/static-pod-resources/kube-apiserver-pod-53
+found latest kube-controller-manager: /etc/kubernetes/static-pod-resources/kube-controller-manager-pod-16
+found latest kube-scheduler: /etc/kubernetes/static-pod-resources/kube-scheduler-pod-5
+found latest etcd: /etc/kubernetes/static-pod-resources/etcd-pod-8
+6f745882ff3b7a08d9d3326a5b61ccc49168c6e8fd7f6cfcf0e967c941072ccf
+etcdctl version: 3.5.9
+API version: 3.5
+{"level":"info","ts":"2024-11-08T06:09:44.462397Z","caller":"snapshot/v3_snapshot.go:65","msg":"created temporary db file","path":"/home/core/assets/backup/snapshot_2024-11-08_060943.db.part"}
+{"level":"info","ts":"2024-11-08T06:09:44.469202Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:212","msg":"opened snapshot stream; downloading"}
+{"level":"info","ts":"2024-11-08T06:09:44.469247Z","caller":"snapshot/v3_snapshot.go:73","msg":"fetching snapshot","endpoint":"https://71.1.1.230:2379"}
+{"level":"info","ts":"2024-11-08T06:09:45.438602Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:220","msg":"completed snapshot read; closing"}
+{"level":"info","ts":"2024-11-08T06:09:45.735794Z","caller":"snapshot/v3_snapshot.go:88","msg":"fetched snapshot","endpoint":"https://71.1.1.230:2379","size":"124 MB","took":"1 second ago"}
+{"level":"info","ts":"2024-11-08T06:09:45.735896Z","caller":"snapshot/v3_snapshot.go:97","msg":"saved","path":"/home/core/assets/backup/snapshot_2024-11-08_060943.db"}
+Snapshot saved at /home/core/assets/backup/snapshot_2024-11-08_060943.db
+{"hash":398546822,"revision":310914317,"totalKey":11032,"totalSize":123707392}
+snapshot db and kube resources are successfully saved to /home/core/assets/backup
+sh-5.1# ls -lrt /home/core/assets/backup
+total 120888
+-rw-------. 1 root root     76564 Nov  8 06:09 static_kuberesources_2024-11-08_060943.tar.gz
+-rw-------. 1 root root 123707424 Nov  8 06:09 snapshot_2024-11-08_060943.db
+sh-5.1# exit
+exit
+sh-4.4# exit
+exit
+
+Removing debug pod ...
+Temporary namespace openshift-debug-4dvvk was removed.
+srib@ocp-haproxy-1:~/ocp-catalog$
+
+srib@ocp-haproxy-1:~/ocp-catalog$ oc debug --as-root node/ocp-cp-2.lab1.srib-lab-ocp.lan
+Temporary namespace openshift-debug-pl2pf is created for debugging node...
+Starting pod/ocp-cp-2lab1srib-lab-ocplan-debug-dr974 ...
+To use host binaries, run `chroot /host`
+Pod IP: 71.1.1.227
+If you don't see a command prompt, try pressing enter.
+sh-4.4# chroot /host
+sh-5.1# mkdir -p /home/core/assets/backup
+sh-5.1# /usr/local/bin/cluster-backup.sh /home/core/assets/backup
+Certificate /etc/kubernetes/static-pod-certs/configmaps/etcd-serving-ca/ca-bundle.crt is missing. Checking in different directory
+Certificate /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-serving-ca/ca-bundle.crt found!
+found latest kube-apiserver: /etc/kubernetes/static-pod-resources/kube-apiserver-pod-53
+found latest kube-controller-manager: /etc/kubernetes/static-pod-resources/kube-controller-manager-pod-16
+found latest kube-scheduler: /etc/kubernetes/static-pod-resources/kube-scheduler-pod-5
+found latest etcd: /etc/kubernetes/static-pod-resources/etcd-pod-8
+ca518530db1dfc728ef637e014ec78292508727e9821c0db4b3a6dc1ea3dc3d8
+etcdctl version: 3.5.9
+API version: 3.5
+{"level":"info","ts":"2024-11-08T06:13:09.246254Z","caller":"snapshot/v3_snapshot.go:65","msg":"created temporary db file","path":"/home/core/assets/backup/snapshot_2024-11-08_061308.db.part"}
+{"level":"info","ts":"2024-11-08T06:13:09.252738Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:212","msg":"opened snapshot stream; downloading"}
+{"level":"info","ts":"2024-11-08T06:13:09.25279Z","caller":"snapshot/v3_snapshot.go:73","msg":"fetching snapshot","endpoint":"https://71.1.1.227:2379"}
+{"level":"info","ts":"2024-11-08T06:13:10.260305Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:220","msg":"completed snapshot read; closing"}
+{"level":"info","ts":"2024-11-08T06:13:10.529178Z","caller":"snapshot/v3_snapshot.go:88","msg":"fetched snapshot","endpoint":"https://71.1.1.227:2379","size":"127 MB","took":"1 second ago"}
+{"level":"info","ts":"2024-11-08T06:13:10.529298Z","caller":"snapshot/v3_snapshot.go:97","msg":"saved","path":"/home/core/assets/backup/snapshot_2024-11-08_061308.db"}
+Snapshot saved at /home/core/assets/backup/snapshot_2024-11-08_061308.db
+{"hash":175850417,"revision":310915977,"totalKey":9900,"totalSize":127262720}
+snapshot db and kube resources are successfully saved to /home/core/assets/backup
+sh-5.1# ls -lrt /home/core/assets/backup
+total 124364
+-rw-------. 1 root root     80081 Nov  8 06:13 static_kuberesources_2024-11-08_061308.tar.gz
+-rw-------. 1 root root 127262752 Nov  8 06:13 snapshot_2024-11-08_061308.db
+sh-5.1# exit
+exit
+sh-4.4# exit
+exit
+
+Removing debug pod ...
+Temporary namespace openshift-debug-pl2pf was removed.
+srib@ocp-haproxy-1:~/ocp-catalog$
+srib@ocp-haproxy-1:~/ocp-catalog$
+srib@ocp-haproxy-1:~/ocp-catalog$ oc debug --as-root node/ocp-cp-3.lab1.srib-lab-ocp.lan
+Temporary namespace openshift-debug-d6lcm is created for debugging node...
+Starting pod/ocp-cp-3lab1srib-lab-ocplan-debug-gbp7w ...
+To use host binaries, run `chroot /host`
+Pod IP: 71.1.1.229
+If you don't see a command prompt, try pressing enter.
+sh-4.4# chroot /host
+sh-5.1# mkdir -p /home/core/assets/backup
+sh-5.1# /usr/local/bin/cluster-backup.sh /home/core/assets/backup
+Certificate /etc/kubernetes/static-pod-certs/configmaps/etcd-serving-ca/ca-bundle.crt is missing. Checking in different directory
+Certificate /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-serving-ca/ca-bundle.crt found!
+found latest kube-apiserver: /etc/kubernetes/static-pod-resources/kube-apiserver-pod-53
+found latest kube-controller-manager: /etc/kubernetes/static-pod-resources/kube-controller-manager-pod-16
+found latest kube-scheduler: /etc/kubernetes/static-pod-resources/kube-scheduler-pod-5
+found latest etcd: /etc/kubernetes/static-pod-resources/etcd-pod-8
+06177cd0da4be6c7307a1a6fc7d6efa74b48f9c7c8cc9fd64c6f958ead893e0e
+etcdctl version: 3.5.9
+API version: 3.5
+{"level":"info","ts":"2024-11-08T06:14:11.550486Z","caller":"snapshot/v3_snapshot.go:65","msg":"created temporary db file","path":"/home/core/assets/backup/snapshot_2024-11-08_061410.db.part"}
+{"level":"info","ts":"2024-11-08T06:14:11.557244Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:212","msg":"opened snapshot stream; downloading"}
+{"level":"info","ts":"2024-11-08T06:14:11.557281Z","caller":"snapshot/v3_snapshot.go:73","msg":"fetching snapshot","endpoint":"https://71.1.1.229:2379"}
+{"level":"info","ts":"2024-11-08T06:14:12.314034Z","logger":"client","caller":"v3@v3.5.9/maintenance.go:220","msg":"completed snapshot read; closing"}
+{"level":"info","ts":"2024-11-08T06:14:12.530844Z","caller":"snapshot/v3_snapshot.go:88","msg":"fetched snapshot","endpoint":"https://71.1.1.229:2379","size":"105 MB","took":"now"}
+{"level":"info","ts":"2024-11-08T06:14:12.53092Z","caller":"snapshot/v3_snapshot.go:97","msg":"saved","path":"/home/core/assets/backup/snapshot_2024-11-08_061410.db"}
+Snapshot saved at /home/core/assets/backup/snapshot_2024-11-08_061410.db
+{"hash":540452204,"revision":310916648,"totalKey":10573,"totalSize":104857600}
+snapshot db and kube resources are successfully saved to /home/core/assets/backup
+sh-5.1# ls -lrt /home/core/assets/backup
+total 102484
+-rw-------. 1 root root     79886 Nov  8 06:14 static_kuberesources_2024-11-08_061410.tar.gz
+-rw-------. 1 root root 104857632 Nov  8 06:14 snapshot_2024-11-08_061410.db
+sh-5.1# exit
+exit
+sh-4.4# exit
+exit
+
+Removing debug pod ...
+Temporary namespace openshift-debug-d6lcm was removed.
+srib@ocp-haproxy-1:~/ocp-catalog$
+
+
+3.5. Get Target release image digest from local mirror registry and create Target Release Image config map
+run these commands in mirror registry
+
+
+
+[root@bastion ocp-update-version]# oc adm release info -o 'jsonpath={.digest}{"\n"}' bastion.srib-lab-ocp.lan:8443/ocp4/openshift4:4.21.30-x86_64
+sha256:68e5111465b0e50a887ae2a10212517122fba44366749fb2bde8f6dd15bb49c8
+
+
+4. Upgrade the cluster
+4.1.  Pause Machine Health Check
+
+
+srib@ocp-haproxy-1:~$ oc -n openshift-machine-api annotate mhc machine-api-termination-handler cluster.x-k8s.io/paused=""
+machinehealthcheck.machine.openshift.io/machine-api-termination-handler annotate
+srib@ocp-haproxy-1:~$
+
+
+Preparing to upgrade to OpenShift Container Platform 4.21 - Red Hat Customer Portal
+
+
+
+4.2. Preparing to upgrade to OpenShift Container Platform 4.21
+
+
+oc -n openshift-config patch cm admin-acks --patch '{"data":{"ack-4.21-admissionregistration-v1beta1-api-removals-in-4.21":"true"}}' --type=merge
+
+
+4.3. Patch Cluster version based on reference of upgrade map
+
+
+srib@ocp-haproxy-1:~$ oc patch clusterversion version --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+clusterversion.config.openshift.io/version patched (no change)
+srib@ocp-haproxy-1:~$
+
+
+4.4. Upgrade the cluster
+
+
+rib@ocp-haproxy-1:~/ocp-configMNO$ oc adm upgrade --allow-explicit-upgrade --allow-upgrade-with-warnings --to-image bastion.srib-lab-ocp.lan:8443/ocp4/openshift4@sha256:883088e3e6efa7443b0ac28cd7682c2fdbda889b576edad626769bf956ac0858
+warning: The requested upgrade image is not one of the available updates. You have used --allow-explicit-upgrade for the update to proceed anyway
+warning: --allow-upgrade-with-warnings is bypassing: the cluster is experiencing an error reconciling "4.21.0":
+
+  Reason: ClusterOperatorNotAvailable
+  Message: Cluster operator insights is not available
+Requested update to release image bastion.srib-lab-ocp.lan:8443/ocp4/openshift4@sha256:883088e3e6efa7443b0ac28cd7682c2fdbda889b576edad626769bf956ac0858
+srib@ocp-haproxy-1:~/ocp-config$
+srib@ocp-haproxy-1:~/ocp-configMNO$ oc get clusterversion
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.21.30   True        True          72m     Working towards 4.21.30: 109 of 880 done (12% complete), waiting up to 40 minutes on etcd, kube-apiserver
+
+
+
+
+
+# *IF* even after sometime, clusterversion is not in 'Progressing' state, then delete insights operators
+srib@ocp-haproxy-1:~/ocp-configMNO$ oc get clusterversion
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.21.30   True        False         2d2h    Error while reconciling 4.21.23: the cluster operator insights is not available    =====> if this error
+srib@ocp-haproxy-1:~/ocp-configMNO$
+srib@ocp-haproxy-1:~/ocp-configMNO$
+srib@ocp-haproxy-1:~/ocp-configMNO$ oc delete deployment insights-operator -n openshift-insights
+deployment.apps "insights-operator" deleted
+srib@ocp-haproxy-1:~/ocp-configMNO$ oc delete co/insights
+clusteroperator.config.openshift.io "insights" deleted
+srib@ocp-haproxy-1:~/ocp-configMNO$
+4.5.  Operator upgradation 
+
+
+srib@ocp-haproxy-1:~/ocp-catalogMNO$
+srib@ocp-haproxy-1:~/ocp-catalogMNO$ oc patch sub sriov-network-operator-subscription -n openshift-sriov-network-operator --type=merge -p '{"spec":{"source":"cs-redhat-operator-index-v4.21"}}'
+subscription.operators.coreos.com/sriov-network-operator-subscription patched
+
+srib@ocp-haproxy-1:~/ocp-catalogMNO$ oc patch sub ptp-operator-subscription -n openshift-ptp --type=merge -p '{"spec":{"source":"cs-redhat-operator-index-v4.21"}}'
+subscription.operators.coreos.com/ptp-operator-subscription patched
+
+srib@ocp-haproxy-1:~/ocp-catalogMNO$ oc patch sub kubernetes-nmstate-operator -n openshift-nmstate  --type=merge -p '{"spec":{"source":"cs-redhat-operator-index-v4.21"}}'
+subscription.operators.coreos.com/kubernetes-nmstate-operator patched
+
+srib@ocp-haproxy-1:~/ocp-catalogMNO$ oc patch sub local-storage-operator -n openshift-local-storage  --type=merge -p '{"spec":{"source":"cs-redhat-operator-index-v4.21"}}'
+subscription.operators.coreos.com/local-storage-operator patched
+
+
+4.6.  ODF Operator upgradation 
+
+
+[root@bastion ~]# oc patch Subscription odf-operator --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription cephcsi-operator-stable-4.19-redhat-operator-index-openshift-marketplace --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription mcg-operator-stable-4.19-redhat-operator-index-openshift-marketplace --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription ocs-client-operator-stable-4.19-redhat-operator-index-openshift-marketplace  --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription odf-csi-addons-operator-stable-4.19-redhat-operator-index-openshift-marketplace  --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription ocs-operator-stable-4.19-redhat-operator-index-openshift-marketplace   --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription odf-dependencies   --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription odf-prometheus-operator-stable-4.19-redhat-operator-index-openshift-marketplace   --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription recipe-stable-4.19-redhat-operator-index-openshift-marketplace   --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+[root@bastion ~]# oc patch Subscription rook-ceph-operator-stable-4.19-redhat-operator-index-openshift-marketplace --type merge -p '{"spec": {"channel": "stable-4.21"}}'
+
+
+srib@ocp-haproxy-1:~/ocp_4_20$ oc get sub -n openshift-storage
+NAME                                                                                                 PACKAGE                             SOURCE                           CHANNEL
+cephcsi-operator                                                                                     cephcsi-operator                    cs-redhat-operator-index-v4.21   stable-4.21
+mcg-operator                                                                                         mcg-operator                        cs-redhat-operator-index-v4.21   stable-4.21
+ocs-client-operator                                                                                  ocs-client-operator                 cs-redhat-operator-index-v4.21   stable-4.21
+ocs-operator                                                                                         ocs-operator                        cs-redhat-operator-index-v4.21   stable-4.21
+odf-csi-addons-operator-stable-4.21-cs-redhat-operator-index-v4.21-openshift-marketplace             odf-csi-addons-operator             cs-redhat-operator-index-v4.21   stable-4.21
+odf-dependencies                                                                                     odf-dependencies                    cs-redhat-operator-index-v4.21   stable-4.21
+odf-external-snapshotter-operator-stable-4.21-cs-redhat-operator-index-v4.21-openshift-marketplace   odf-external-snapshotter-operator   cs-redhat-operator-index-v4.21   stable-4.21
+odf-operator                                                                                         odf-operator                        cs-redhat-operator-index-v4.21   stable-4.21
+odf-prometheus-operator-stable-4.21-cs-redhat-operator-index-v4.21-openshift-marketplace             odf-prometheus-operator             cs-redhat-operator-index-v4.21   stable-4.21
+recipe-stable-4.21-cs-redhat-operator-index-v4.21-openshift-marketplace                              recipe                              cs-redhat-operator-index-v4.21   stable-4.21
+rook-ceph-operator                                                                                   rook-ceph-operator                  cs-redhat-operator-index-v4.21   stable-4.21
+srib@ocp-haproxy-1:~/ocp_4_20$
+srib@ocp-haproxy-1:~/ocp_4_20$ oc get csv -n openshift-storage
+NAME                                              DISPLAY                            VERSION        REPLACES                                          PHASE
+cephcsi-operator.v4.21.7-rhodf                    CephCSI operator                   4.21.7-rhodf   cephcsi-operator.v4.21.6-rhodf                    Succeeded
+mcg-operator.v4.21.7-rhodf                        NooBaa Operator                    4.21.7-rhodf   mcg-operator.v4.21.6-rhodf                        Succeeded
+ocs-client-operator.v4.21.7-rhodf                 OpenShift Data Foundation Client   4.21.7-rhodf   ocs-client-operator.v4.21.6-rhodf                 Succeeded
+ocs-operator.v4.21.7-rhodf                        OpenShift Container Storage        4.21.7-rhodf   ocs-operator.v4.21.6-rhodf                        Succeeded
+odf-csi-addons-operator.v4.21.7-rhodf             CSI Addons                         4.21.7-rhodf   odf-csi-addons-operator.v4.21.6-rhodf             Succeeded
+odf-dependencies.v4.21.7-rhodf                    Data Foundation Dependencies       4.21.7-rhodf   odf-dependencies.v4.21.6-rhodf                    Succeeded
+odf-external-snapshotter-operator.v4.21.7-rhodf   Snapshot Controller                4.21.7-rhodf   odf-external-snapshotter-operator.v4.21.6-rhodf   Succeeded
+odf-operator.v4.21.7-rhodf                        OpenShift Data Foundation          4.21.7-rhodf   odf-operator.v4.21.6-rhodf                        Succeeded
+odf-prometheus-operator.v4.21.7-rhodf             Prometheus Operator                4.21.7-rhodf   odf-prometheus-operator.v4.21.6-rhodf             Succeeded
+recipe.v4.21.7-rhodf                              Recipe                             4.21.7-rhodf   recipe.v4.21.6-rhodf                              Succeeded
+rook-ceph-operator.v4.21.7-rhodf                  Rook-Ceph                          4.21.7-rhodf   rook-ceph-operator.v4.21.6-rhodf                  Succeeded
+srib@ocp-haproxy-1:~/ocp_4_20$
+
